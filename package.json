@@ -1,6 +1,6 @@
 {
-  "name": "@eshn/visual-regression-tests",
-  "version": "0.0.8",
+  "name": "regressify",
+  "version": "1.0.20",
   "description": "Visual regression tests support",
   "main": "index.js",
   "type": "module",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Donhv/regression-test.git"
+    "url": "git+https://github.com/precise-alloy/regression-test.git"
   },
   "keywords": [
     "cli",
