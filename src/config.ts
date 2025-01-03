@@ -22,8 +22,8 @@ if (globalRequiredLogin) {
 
 const scenarios: Scenario[] = [];
 
-const getScriptPath = (path: string, engine: 'puppeteer' | 'playwright') => {
-  return (engine == 'puppeteer' ? 'puppet' : 'playwright') + path;
+const getScriptPath = (scriptPath: string, engine: 'puppeteer' | 'playwright') => {
+  return path.join(__dirname, '..', '.engine_scripts', (engine == 'puppeteer' ? 'puppet' : 'playwright') + scriptPath);
 };
 
 if (!testSuite) {
