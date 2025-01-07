@@ -1,4 +1,4 @@
-import { ScenarioModel } from './types';
+import { ScenarioModel } from './types.js';
 
 export const createScenario = (opts: ScenarioModel): ScenarioModel => {
   const parsedUrl = new URL(opts.url);
@@ -6,9 +6,9 @@ export const createScenario = (opts: ScenarioModel): ScenarioModel => {
   return {
     ...opts,
     label: opts.label ?? `${opts.index} of ${opts.total}: ${parsedUrl.pathname}`,
-    cookiePath: opts.cookiePath ?? 'visual_tests/_cookies.yaml',
-    cssOverridePath: opts.cssOverridePath ?? 'visual_tests/_override.css',
-    jsOnReadyPath: opts.jsOnReadyPath ?? 'visual_tests/_on-ready.js',
+    cookiePath: opts.cookiePath ?? 'common/_cookies.yaml',
+    cssOverridePath: opts.cssOverridePath ?? 'common/_override.css',
+    jsOnReadyPath: opts.jsOnReadyPath ?? 'common/_on-ready.js',
     referenceUrl: opts.referenceUrl ?? '',
     readyEvent: '',
     hideSelectors: opts.hideSelectors ?? [],

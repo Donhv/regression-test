@@ -5,11 +5,7 @@ on:
     branches:
       - release
     paths:
-      - .engine_scripts/**
-      - cli/**
-      - src/**
       - package.json
-      - cli.js
 
   workflow_dispatch:
 
@@ -33,6 +29,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Build
+        run: npm run build
 
       - name: Publish to NPM
         run: npm publish --access public
