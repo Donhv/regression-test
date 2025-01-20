@@ -75,6 +75,24 @@
         },
         "postInteractionWait": {
           "type": "number"
+        },
+        "state": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9_-]+$"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z0-9_-]+$"
+              }
+            }
+          ]
+        },
+        "ignoreSslErrors": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -90,7 +108,8 @@
           "type": "string"
         },
         "label": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$"
         },
         "description": {
           "type": "string"
@@ -139,17 +158,20 @@
           ]
         },
         "id": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$"
         },
         "needs": {
           "oneOf": [
             {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-z0-9_-]+$"
             },
             {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^[a-z0-9_-]+$"
               }
             }
           ]
@@ -168,6 +190,9 @@
                 "$ref": "#/definitions/ClickAction"
               },
               {
+                "$ref": "#/definitions/GotoAction"
+              },
+              {
                 "$ref": "#/definitions/HideAction"
               },
               {
@@ -178,6 +203,9 @@
               },
               {
                 "$ref": "#/definitions/InputFileAction"
+              },
+              {
+                "$ref": "#/definitions/persistAction"
               },
               {
                 "$ref": "#/definitions/PressAction"
@@ -263,7 +291,10 @@
             }
           ]
         }
-      }
+      },
+      "required": [
+        "check"
+      ]
     },
     "ClickAction": {
       "type": "object",
@@ -285,7 +316,10 @@
             }
           ]
         }
-      }
+      },
+      "required": [
+        "click"
+      ]
     },
     "HideAction": {
       "type": "object",
@@ -310,6 +344,31 @@
       },
       "required": [
         "hide"
+      ]
+    },
+    "GotoAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "goto": {
+          "type": "string"
+        },
+        "frame": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "goto"
       ]
     },
     "HoverAction": {
@@ -588,7 +647,10 @@
             }
           ]
         }
-      }
+      },
+      "required": [
+        "uncheck"
+      ]
     },
     "WaitAction": {
       "type": "object",
@@ -623,6 +685,32 @@
       },
       "required": [
         "wait"
+      ]
+    },
+    "persistAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "persist": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$"
+        },
+        "frame": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "persist"
       ]
     }
   }

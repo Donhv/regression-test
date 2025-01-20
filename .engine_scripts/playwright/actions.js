@@ -1,8 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const YAML = require('js-yaml');
 const chalkImport = import('chalk').then((m) => m.default);
 
-module.exports = async (currentPage, scenario) => {
+module.exports = async (context) => {
+  const { currentPage, scenario, browserContext } = context;
+
   if (!scenario.actions) {
     return;
   }
@@ -44,6 +47,11 @@ module.exports = async (currentPage, scenario) => {
       await page.waitForSelector(action.focus);
       let el = await page.locator(action.focus);
       el.focus();
+    }
+
+    if (!!action.goto) {
+      console.log(logPrefix + 'Goto:', action.goto);
+      await page.goto(action.goto);
     }
 
     if (!!action.hide) {
@@ -169,6 +177,11 @@ module.exports = async (currentPage, scenario) => {
       } else {
         await page.waitForSelector(action.wait);
       }
+    }
+
+    if (!!action.persist) {
+      console.log(logPrefix + 'persist:', action.persist);
+      await browserContext.storageState({ path: action.path });
     }
   }
 };

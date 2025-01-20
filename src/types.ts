@@ -3,6 +3,8 @@ import { Scenario } from 'backstopjs';
 export interface ReplacementModel {
   ref: string;
   test: string;
+  regex?: boolean;
+  flags?: string;
 }
 
 export interface ReplacementsModel {
@@ -24,6 +26,8 @@ export interface TestSuiteModel {
   misMatchThreshold?: number;
   postInteractionWait?: number;
   viewportNames?: string | string[];
+  ignoreSslErrors?: boolean;
+  state?: string;
 }
 
 export interface ScenarioModel extends Scenario {
@@ -42,3 +46,8 @@ export interface ScenarioModel extends Scenario {
   misMatchThreshold?: number;
   postInteractionWait?: number;
 }
+
+export type PersistAction = {
+  persist: string;
+  path?: string;
+};

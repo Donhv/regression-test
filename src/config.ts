@@ -3,11 +3,12 @@ import { Config, Scenario, ViewportNext } from 'backstopjs';
 import { createScenario } from './scenarios.js';
 import path from 'path';
 import { getFlagArg, getStringArg, parseDataFromFile, getLibraryPath } from './helpers.js';
-import { TestSuiteModel, ScenarioModel } from './types.js';
+import { TestSuiteModel, ScenarioModel, PersistAction } from './types.js';
 import chalk from 'chalk';
 import { exit } from 'process';
 import YAML from 'js-yaml';
 import { getTestUrl } from './replacements.js';
+import { getStatePath } from './state.js';
 
 const libraryPath = getLibraryPath();
 const engine: 'puppeteer' | 'playwright' = 'playwright';
@@ -22,7 +23,7 @@ function getArgConfig(args: string[]) {
 
   if (!testSuite) {
     console.log(chalk.red('Argument `--test-suite` must be set.'));
-    console.log(chalk.red('Sample command: npm run <command> -- --test-suite <test-suite>'));
+    console.log(chalk.red('Sample command: regressify <command> --test-suite <test-suite>'));
     console.log(chalk.red('Command is either `ref`, `approve` or `test`.'));
     exit(1);
   }
@@ -125,6 +126,7 @@ function getScenarios(args: string[], testSuite: string, isRef: boolean, globalR
         index: String(index + 1).padStart(pad, ' '),
         total: data.scenarios.length,
         delay: s.delay ?? 1000,
+        state: data.state,
         hideSelectors: s.hideSelectors ?? data.hideSelectors,
         removeSelectors: s.removeSelectors ?? data.removeSelectors,
         useCssOverride: s.useCssOverride ?? data.useCssOverride,
@@ -143,6 +145,19 @@ function getScenarios(args: string[], testSuite: string, isRef: boolean, globalR
         postInteractionWait: s.postInteractionWait ?? data.postInteractionWait ?? 1,
       };
 
+      if (opts.restore && Array.isArray(opts.restore)) {
+        // Deduplicate restore array
+        opts.restore = opts.restore.filter((value, index, self) => self.indexOf(value) === index);
+      }
+
+      if (opts.actions && Array.isArray(opts.actions)) {
+        let persistActions = opts.actions.filter((a) => (a as PersistAction).persist) as PersistAction[];
+        for (const persistAction of persistActions) {
+          persistAction.path = getStatePath(persistAction.persist as string);
+          // console.log('Persist action: ', persistAction);
+        }
+      }
+
       const scenario = createScenario(opts);
       scenarios.push(scenario);
     });
@@ -155,7 +170,7 @@ export function getConfig(args: string[]): Config {
   const { testSuite, isRef, globalRequiredLogin } = getArgConfig(args);
   const { scenarios, data, viewports } = getScenarios(args, testSuite, isRef, globalRequiredLogin);
 
-  return {
+  const config = {
     id: testSuite,
     viewports,
     onBeforeScript: getScriptPath('/onBefore.js', engine),
@@ -180,10 +195,15 @@ export function getConfig(args: string[]): Config {
         '--window-position=0,0',
       ],
       browser: data?.browser ?? 'chromium',
+      ignoreHTTPSErrors: data && typeof data?.ignoreSslErrors === 'boolean' ? data.ignoreSslErrors : true,
+      headless: data?.debug ? undefined : 'new',
+      storageState: data?.state && fs.existsSync(getStatePath(data.state)) ? getStatePath(data.state) : undefined,
     },
     asyncCaptureLimit: data?.asyncCaptureLimit ?? 5,
     asyncCompareLimit: data?.asyncCompareLimit ?? 50,
     debug: false,
     debugWindow: data?.debug,
   } as Config;
+
+  return config;
 }

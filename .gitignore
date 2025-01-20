@@ -5,3 +5,5 @@ src/**/*.js
 src/**/*.d.ts
 src/**/*.map
 *.tsbuildinfo
+.states/
+visual_tests/
